@@ -37,6 +37,7 @@ want it.
 ## Bootstrap a new machine
 
 ```sh
+command -v git >/dev/null 2>&1 || { command -v apt-get >/dev/null 2>&1 && sudo apt-get update && sudo apt-get install -y git; }
 git clone --bare https://github.com/johnnguyencodes/dotfiles.git "$HOME/.dotfiles"
 git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout 2>&1 \
   | grep -E '^\s+\.' | awk '{print $1}' | while read -r f; do
@@ -47,7 +48,12 @@ git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout
 bash "$HOME/bootstrap.sh"
 ```
 
-The middle two lines handle the standard bare-repo-dotfiles gotcha: if a
+The first line covers a genuinely minimal machine (e.g. Raspberry Pi OS
+Lite) that doesn't even have `git` yet -- everything after it needs git to
+run at all. macOS and any machine that already has git are unaffected
+(the `command -v git` check short-circuits).
+
+The next two lines handle the standard bare-repo-dotfiles gotcha: if a
 fresh machine already has conflicting files (e.g. a default `.zshrc`), the
 first checkout attempt lists them instead of overwriting; that output gets
 parsed to back those files up to `~/.dotfiles-backup/` before checking out

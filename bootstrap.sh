@@ -27,7 +27,43 @@ case "$OS" in
 esac
 
 # ------------------------------------------------------------------------
-# 1. Homebrew (works on both macOS and Linux; used as the single package
+# 1. Linux system prerequisites
+#
+# Homebrew's Linux installer needs git, curl, and a C toolchain already
+# present -- unlike macOS (Xcode Command Line Tools cover this), it won't
+# install them itself. A genuinely minimal image (e.g. Raspberry Pi OS
+# Lite) may not ship any of these. Checked via dpkg, not `have`, since a
+# package like ca-certificates has no command of its own to probe for.
+# ------------------------------------------------------------------------
+
+if $IS_LINUX && have apt-get; then
+  if ! have sudo; then
+    warn "sudo isn't installed -- install it (as root) before re-running this script."
+    exit 1
+  fi
+
+  apt_pkg_installed() {
+    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "^install ok installed"
+  }
+
+  MISSING_PKGS=()
+  for pkg in curl git build-essential procps file ca-certificates; do
+    apt_pkg_installed "$pkg" || MISSING_PKGS+=("$pkg")
+  done
+
+  if [ "${#MISSING_PKGS[@]}" -gt 0 ]; then
+    log "Installing missing system prerequisites: ${MISSING_PKGS[*]}..."
+    sudo apt-get update
+    sudo apt-get install -y "${MISSING_PKGS[@]}"
+  else
+    log "System prerequisites already installed"
+  fi
+elif $IS_LINUX; then
+  warn "No apt-get found -- make sure curl, git, a C toolchain, and ca-certificates are installed before continuing."
+fi
+
+# ------------------------------------------------------------------------
+# 2. Homebrew (works on both macOS and Linux; used as the single package
 #    source for the CLI toolset so there's one list of names, not two).
 # ------------------------------------------------------------------------
 
@@ -56,7 +92,7 @@ fi
 eval "$("$BREW_BIN" shellenv)"
 
 # ------------------------------------------------------------------------
-# 2. CLI toolset
+# 3. CLI toolset
 #
 # Installed one at a time, skipping any tool whose command already
 # exists -- `brew install a b c` as a single batch will upgrade already-
@@ -103,9 +139,15 @@ else
 fi
 
 # ------------------------------------------------------------------------
-# 3. WezTerm (no Linux Homebrew cask -- casks are macOS-only. The `wezterm`
+# 4. WezTerm (no Linux Homebrew cask -- casks are macOS-only. The `wezterm`
 # command isn't necessarily on PATH even when installed as a cask, so check
 # for the .app bundle directly on macOS rather than relying on `have`.)
+#
+# Skipped on headless Linux (no DISPLAY/WAYLAND_DISPLAY) -- WezTerm is a
+# GUI terminal emulator, so it only makes sense on the machine you actually
+# open a window on. If this machine is only ever reached over SSH (e.g. a
+# Raspberry Pi running headless), .wezterm.lua is irrelevant here; it
+# belongs on whichever machine runs the WezTerm client, not this one.
 # ------------------------------------------------------------------------
 
 wezterm_installed() {
@@ -116,7 +158,13 @@ wezterm_installed() {
   fi
 }
 
-if ! wezterm_installed; then
+headless_linux() {
+  $IS_LINUX && [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]
+}
+
+if headless_linux; then
+  log "No display server detected -- skipping WezTerm (GUI app; install it on the machine you actually open a terminal window on)"
+elif ! wezterm_installed; then
   if $IS_MACOS; then
     log "Installing WezTerm (brew cask)..."
     brew install --cask wezterm
@@ -137,7 +185,7 @@ else
 fi
 
 # ------------------------------------------------------------------------
-# 4. zsh as the login shell
+# 5. zsh as the login shell
 #
 # Checked against the account's actual configured shell (getent/dscl), not
 # the $SHELL env var -- that reflects how this process was invoked, not
@@ -177,7 +225,7 @@ else
 fi
 
 # ------------------------------------------------------------------------
-# 5. oh-my-zsh + plugins
+# 6. oh-my-zsh + plugins
 # ------------------------------------------------------------------------
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -207,7 +255,7 @@ clone_zsh_plugin zsh-autosuggestions https://github.com/zsh-users/zsh-autosugges
 clone_zsh_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting
 
 # ------------------------------------------------------------------------
-# 6. gpakosz/.tmux framework + symlink
+# 7. gpakosz/.tmux framework + symlink
 # ------------------------------------------------------------------------
 
 if [ ! -d "$HOME/.tmux/.git" ]; then
@@ -222,7 +270,7 @@ fi
 # .tmux.conf.local itself comes from the dotfiles checkout, not this clone.
 
 # ------------------------------------------------------------------------
-# 7. TPM (tmux plugin manager)
+# 8. TPM (tmux plugin manager)
 # ------------------------------------------------------------------------
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
@@ -233,7 +281,7 @@ else
 fi
 
 # ------------------------------------------------------------------------
-# 8. Dotfiles bare repo (no-op if already checked out, e.g. when this
+# 9. Dotfiles bare repo (no-op if already checked out, e.g. when this
 #    script is being run as part of the checkout it came from)
 # ------------------------------------------------------------------------
 
@@ -270,7 +318,12 @@ echo "  1. Restart your shell (or open a new terminal) so zsh/oh-my-zsh takes ef
 echo "  2. Open tmux and wait a few seconds for TPM to finish installing plugins"
 echo "     (tmux-copycat, tmux-cpu, tmux-battery, tmux-resurrect, tmux-continuum,"
 echo "     tmux-sessionx, tmux-floax) -- this happens automatically on first launch."
-echo "  3. Open WezTerm and confirm the font (JetBrains Mono) and colors look right."
+if headless_linux; then
+  echo "  3. WezTerm was skipped (no display server on this machine). .wezterm.lua"
+  echo "     only matters on whichever machine you actually open a WezTerm window on."
+else
+  echo "  3. Open WezTerm and confirm the font (JetBrains Mono) and colors look right."
+fi
 echo "  4. Run 'nvim' -- lazy.nvim will bootstrap itself and install all plugins"
 echo "     on first launch."
 echo "  5. Optional: run 'p10k configure' to customize the prompt, or add your own"
