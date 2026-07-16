@@ -36,8 +36,10 @@ want it.
 ```sh
 git clone --bare https://github.com/johnnguyencodes/dotfiles.git "$HOME/.dotfiles"
 git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout 2>&1 \
-  | grep -E '^\s+\.' | awk '{print $1}' \
-  | xargs -I{} sh -c 'mkdir -p "$HOME/.dotfiles-backup/$(dirname {})" && mv "$HOME/{}" "$HOME/.dotfiles-backup/{}"'
+  | grep -E '^\s+\.' | awk '{print $1}' | while read -r f; do
+    mkdir -p "$HOME/.dotfiles-backup/$(dirname "$f")"
+    mv "$HOME/$f" "$HOME/.dotfiles-backup/$f"
+  done
 git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout
 bash "$HOME/bootstrap.sh"
 ```
