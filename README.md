@@ -16,10 +16,13 @@ set all of it up on a fresh machine (macOS or Ubuntu/Debian Linux).
 - **`.wezterm.lua`** -- WezTerm terminal config.
 - **`.tmux.conf`** (symlink) + **`.tmux.conf.local`** -- tmux, built on the
   [gpakosz/.tmux](https://github.com/gpakosz/.tmux) framework with a
-  Catppuccin status line. `.tmux.conf` itself isn't tracked here -- it's a
-  symlink into a separate clone of the upstream framework at `~/.tmux`
-  (bootstrap sets this up); only `.tmux.conf.local`, the actual
-  customization file, is tracked.
+  Catppuccin status line. `.tmux.conf` is tracked here, but only as the
+  symlink itself (pointing at `.tmux/.tmux.conf`) -- its target comes from
+  a separate clone of the upstream framework at `~/.tmux` that
+  `bootstrap.sh` sets up, so the symlink is dangling until that clone
+  exists (harmless: bootstrap clones `~/.tmux` before anything checks the
+  symlink, and recreates it too if it's ever missing). `.tmux.conf.local`,
+  the actual customization file, is a plain tracked file.
 - **`bootstrap.sh`** -- installs everything above needs (Homebrew, the CLI
   toolset, Node via Volta, WezTerm, oh-my-zsh + plugins, the tmux framework +
   TPM) and checks out this repo. Safe to re-run any time -- every step checks
