@@ -149,11 +149,17 @@ fi
 # fresh Ubuntu box) needs chsh here.
 # ------------------------------------------------------------------------
 
+# $USER isn't guaranteed to be set (docker exec, cloud-init, and other
+# non-interactive contexts often don't export it) -- with `set -u` that
+# crashes the whole script the moment it's referenced. `id -un` always
+# works since it asks the OS directly instead of trusting the environment.
+CURRENT_USER="$(id -un)"
+
 ZSH_BIN="$(command -v zsh)"
 if $IS_MACOS; then
-  CURRENT_LOGIN_SHELL="$(dscl . -read "/Users/$USER" UserShell 2>/dev/null | awk '{print $2}')"
+  CURRENT_LOGIN_SHELL="$(dscl . -read "/Users/$CURRENT_USER" UserShell 2>/dev/null | awk '{print $2}')"
 else
-  CURRENT_LOGIN_SHELL="$(getent passwd "$USER" 2>/dev/null | cut -d: -f7)"
+  CURRENT_LOGIN_SHELL="$(getent passwd "$CURRENT_USER" 2>/dev/null | cut -d: -f7)"
 fi
 
 if [ "$(basename "${CURRENT_LOGIN_SHELL:-}")" = "zsh" ]; then
@@ -163,7 +169,11 @@ else
   if ! grep -qx "$ZSH_BIN" /etc/shells 2>/dev/null; then
     echo "$ZSH_BIN" | sudo tee -a /etc/shells >/dev/null
   fi
-  chsh -s "$ZSH_BIN" "$USER" || warn "chsh failed -- set your login shell to $ZSH_BIN manually"
+  # chsh normally requires the *target* user's own password via PAM, even
+  # when they're changing their own shell -- fatal in a non-interactive
+  # script. Running it through sudo elevates to root, which bypasses that
+  # self-auth check on both Linux (PAM) and macOS (opendirectoryd).
+  sudo chsh -s "$ZSH_BIN" "$CURRENT_USER" || warn "chsh failed -- set your login shell to $ZSH_BIN manually"
 fi
 
 # ------------------------------------------------------------------------
