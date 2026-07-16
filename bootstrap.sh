@@ -88,6 +88,20 @@ install_if_missing lazygit
 install_if_missing volta
 install_if_missing gh
 
+# Volta manages Node versions but doesn't install a Node runtime on its
+# own -- it only fetches one when something asks for it (a pinned
+# package.json, or this explicit install). .zshrc sets up VOLTA_HOME/PATH
+# for interactive shells, but this script runs non-interactively, so set
+# them here too before calling volta.
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+if have node; then
+  log "node already installed ($(node --version), via volta or otherwise), skipping"
+else
+  log "Installing Node LTS via volta..."
+  volta install node@lts
+fi
+
 # ------------------------------------------------------------------------
 # 3. WezTerm (no Linux Homebrew cask -- casks are macOS-only. The `wezterm`
 # command isn't necessarily on PATH even when installed as a cask, so check

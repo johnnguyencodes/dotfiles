@@ -21,9 +21,9 @@ set all of it up on a fresh machine (macOS or Ubuntu/Debian Linux).
   (bootstrap sets this up); only `.tmux.conf.local`, the actual
   customization file, is tracked.
 - **`bootstrap.sh`** -- installs everything above needs (Homebrew, the CLI
-  toolset, WezTerm, oh-my-zsh + plugins, the tmux framework + TPM) and checks
-  out this repo. Safe to re-run any time -- every step checks whether it's
-  already done before acting.
+  toolset, Node via Volta, WezTerm, oh-my-zsh + plugins, the tmux framework +
+  TPM) and checks out this repo. Safe to re-run any time -- every step checks
+  whether it's already done before acting.
 
 **Not included:** the Catppuccin wallpaper images `.wezterm.lua` references
 (`~/Catppuccin Wallpapers/landscapes/`) -- binary assets, kept out of the
