@@ -12,17 +12,21 @@ vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
-vim.opt.smartindent = true
+vim.opt.smartindent = false
+vim.opt.autoindent = true
+vim.opt.cindent = true
 
 -- word wrap and line break settings
 vim.opt.wrap = true
-vim.opt.breakindent = true
+vim.opt.breakindent = false
 vim.opt.linebreak = true
 
 -- spell checking
 vim.opt.spell = true
-vim.opt.spelllang = {"en_us"}
+vim.opt.spelllang = "en_us"
 vim.opt.spellfile = ("%s/spell/spf.%s.add"):format(vim.fn.stdpath("config"), vim.o.encoding)
+vim.opt.spelloptions = "camel"
+vim.opt.spellcapcheck = ""
 -- look into using a thesaurus
 
 vim.opt.swapfile = false
@@ -30,7 +34,7 @@ vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
-vim.opt.hlsearch = true 
+vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
@@ -39,7 +43,7 @@ vim.opt.title = true  -- set terminal window title to something descriptive
 vim.opt.inccommand = 'nosplit' -- show incremental changes of commands such as search & replace
 vim.opt.virtualedit = 'block' -- virtual editing in visual block mode 
 
-vim.opt.scrolloff = 1 
+vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 

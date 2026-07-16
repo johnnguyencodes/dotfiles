@@ -4,11 +4,16 @@
 #         without any warranty.
 #         Copyright 2012— Gregory Pakosz (@gpakosz).
 
-# -- specifying zsh as the default shell
-set-option -g default-shell "/bin/zsh"
 
-# -- setting status bar position to the top 
-set -g status-position top
+# -- bindings ------------------------------------------------------------------
+
+# preserve tmux stock bindings,
+# while adding bindings that don't conflict with these stock bindings
+# /!\ this disables some of Oh my tmux! bindings described in README.md
+#   - true
+#   - false (default)
+tmux_conf_preserve_stock_bindings=false
+
 
 # -- session creation ----------------------------------------------------------
 
@@ -31,7 +36,7 @@ tmux_conf_new_session_retain_current_path=false
 #   - true
 #   - false (default)
 #   - disabled (do not modify new-window bindings)
-tmux_conf_new_window_retain_current_path=false
+tmux_conf_new_window_retain_current_path=true
 
 # new window tries to reconnect ssh sessions, possible values are:
 #   - true
@@ -263,6 +268,7 @@ tmux_conf_theme_right_separator_sub="|"
 #     - #{username}
 #     - #{username_ssh}
 tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} "
+#tmux_conf_theme_status_left=" ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} | #{pretty_pane_current_path} "
 tmux_conf_theme_status_right=" #{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} "
 
 # status left style
@@ -359,15 +365,21 @@ tmux_conf_theme_clock_style="24"
 tmux_conf_copy_to_os_clipboard=true
 
 
+# -- urlscan -------------------------------------------------------------------
+
+# options passed to urlscan
+tmux_conf_urlscan_options="--compact --dedupe"
+
+
 # -- user customizations -------------------------------------------------------
 
 # this is the place to override or undo settings
 
 # increase history size
-#set -g history-limit 10000
+set -g history-limit 10000
 
 # start with mouse mode enabled
-#set -g mouse on
+set -g mouse on
 
 # force Vi mode
 #   really you should export VISUAL or EDITOR environment variable, see manual
@@ -380,9 +392,6 @@ tmux_conf_copy_to_os_clipboard=true
 # unbind C-b
 # set -g prefix C-a
 # bind C-a send-prefix
-# "last-session" binding
-# bind C-a last-session -l
-
 
 # if you don't want Oh my tmux! to alter a binding, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
@@ -428,50 +437,138 @@ tmux_conf_uninstall_plugins_on_reload=true
 # visit https://github.com/tmux-plugins for available plugins
 set -g @plugin 'tmux-plugins/tmux-copycat'
 set -g @plugin 'tmux-plugins/tmux-cpu'
-# set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'omerxx/tmux-sessionx'
+set -g @plugin 'tmux-plugins/tmux-battery'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
 
-# set keybinding for tmux-sessionx
+# allows tmux-resurrect to save neovim sessions
+set -g @resurrect-strategy-nvim 'session'
+
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @continuum-save-interval '5'  # Saves every 5 minutes
+set -g @continuum-restore 'on'
+
+set -g @plugin 'omerxx/tmux-sessionx#3a1911e'
 set -g @sessionx-bind 'q'
 
-set -g @continuum-restore 'on'
-# catppuccin plugin settings
-set -g @plugin 'catppuccin/tmux'
-set -g @catppuccin_flavour 'mocha'
+set -g @plugin 'omerxx/tmux-floax'
+set -g @floax-width '80%'
+set -g @floax-height '80%'
+set -g @floax-border-color 'magenta'
+set -g @floax-text-color 'blue'
+set -g @floax-bind 'l'
+set -g @floax-change-path 'true'
 
-#disabling automatic renaming of windows
-set-option -g allow-rename off
+set-window-option -g status-position top
 
-# catpuccin oh-my-tmux ui settings
-# The following characters are available
-#               
-# Go to this website for more characters: https://unicodes.jessetane.com/%EE%82%B4
-set -g @catppuccin_window_left_separator "█"
-set -g @catppuccin_window_right_separator "█ "
-set -g @catppuccin_window_current_text "#W"
+## Since tmux may mess up the installation of plugins, use the following in the terminal to manually clone the plugin repos
+# git clone https://github.com/tmux-plugins/tmux-copycat ~/.tmux/plugins/tmux-copycat && \
+# git clone https://github.com/tmux-plugins/tmux-cpu ~/.tmux/plugins/tmux-cpu && \
+# git clone https://github.com/tmux-plugins/tmux-resurrect ~/.tmux/plugins/tmux-resurrect && \
+# git clone https://github.com/tmux-plugins/tmux-continuum ~/.tmux/plugins/tmux-continuum && \
+# git clone https://github.com/omerrxx/tmux-sessionx ~/.tmux/plugins/tmux-sessionx
+# git clone https://github.com/omerxx/tmux-floax ~/.tmux/plugins/tmux-floax
+# also, make sure the local git repo of sessionx is checked out to branch `3a1911e` (make sure to run git fetch origin to fetch remote branches) and then restart tmux for it to work properly.
+# then, to properly load the custom styling for the status bar, exit out of neovim from here and then hit `Ctrl-a :` to open up the tmux command line, then run the command `source-file ~/.tmux.conf.local`
+
+## Load Catppuccin Tmux Theme
+
+run ~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux
+
+# Truecolor Support
+set -g default-terminal "tmux-256color"
+set -as terminal-features ",xterm-256color:RGB"
+
+# Pop-up styles control the appearance of sessionx
+set -g popup-style "bg=default" # Transparent popup
+
+# Disable automatic renaming (to control pane names manually)
+set -g automatic-rename off
+
+# Apply custom window name text and keep Catppuccin styling
 set -g @catppuccin_window_default_text "#W"
-set -g @catppuccin_window_default_fill "none"
-set -g @catppuccin_window_current_fill "all"
-set -g @catppuccin_window_number_position "left"
-set -g @catppuccin_window_middle_separator " | "
-set -g @catppuccin_status_left_separator "█"
-set -g @catppuccin_status_right_separator " █"
-set -g @catppuccin_status_right_separator_inverse "yes"
-set -g @catppuccin_status_fill "all"
-set -g @catppuccin_status_connect_separator "no"
-set -g @catppuccin_application_icon "󰂮"
+set -g @catppuccin_window_current_text "#W"
 
-# setting status modules for display
+# Restore Catppuccin styling for separators and colors
+set -g @catppuccin_flavour "mocha"
+set -g @catppuccin_window_status_style "rounded"
+set -g @catppuccin_window_current_left_separator ""
+set -g @catppuccin_window_current_right_separator ""
+set -g @catppuccin_window_default_left_separator ""
+set -g @catppuccin_window_default_right_separator ""
+
+# Status Line Modules and Separators
+set -g @catppuccin_status_left_separator ""
+set -g @catppuccin_status_right_separator ""
 set -g @catppuccin_status_modules_left "session"
-set -g @catppuccin_status_modules_right "application battery"
+set -g @catppuccin_status_modules_right "uptime battery date_time"
 
+# Active Window Styling
+setw -g window-status-current-style fg=default,bg=default
+setw -g window-status-current-format "#[bg=default,fg=#fab387]#[bg=#fab387,fg=#1e1e2e]#I#[bg=#45475a,fg=#fab387]█#[bg=#313244,fg=#cdd6f4] #W #[bg=default,fg=#fab387]█"
 
-# additional plugins for catppuccin UI
-set -g @plugin 'tmux-plugins/tmux-battery'
-set -g @plugin 'tmux-plugins/tpm'
+# Recently Active Window Styling (Brighter Background)
+setw -g window-status-last-style "fg=default,bg=default,bold"
 
-# Press prefix + I to fetch the plugin and source it.
+# Inactive Windows Styling
+setw -g window-status-style fg=default,bg=default
+setw -g window-status-format "#[bg=default,fg=#6c7086]#[bg=#6c7086,fg=#1e1e2e]#I#[bg=black,fg=#6c7086]█#[bg=#181825,fg=#585b70] #W #[bg=default,fg=#6c7086]█"
+
+# Customize the appearance of windows with activity
+setw -g window-status-activity-style "fg=#a6e3a1,bg=default"
+
+set -g @catppuccin_date_time_text " %a %b %d %I:%M%p"
+
+# Status Bar Customizations
+
+set -g status 2
+set -g status-format[1] ''
+
+set -g status-left ""
+set -g status-right ""
+set -ag status-right "#{E:@catppuccin_status_session} "
+set -ag status-right "#{E:@catppuccin_status_date_time} "
+# -F forces immediate format-expansion so the literal #{battery_icon}/
+# #{battery_percentage} placeholders are baked into status-right before
+# tmux-battery's plugin script does its text substitution pass on it --
+# without -F, they stay hidden behind #{E:...} and never get replaced.
+set -agF status-right "#{E:@catppuccin_status_battery} "
+set -ag status-right "#{E:@catppuccin_status_uptime}"
+
+# tmux-battery's own init script does a one-time text substitution of the
+# #{battery_icon}/#{battery_percentage} placeholders baked into
+# status-right above. The framework's automatic plugin-update-on-launch
+# doesn't reliably run this in time, so run it explicitly here.
+run ~/.tmux/plugins/tmux-battery/battery.tmux
+set -g status-right-style "bg=default"
+set -g status-style "bg=default,fg=default"
+
+# mute TMUX bell
+set -g bell-action none
+
+# Work around a race with the framework's own async theme application:
+# .tmux.conf's _apply_theme runs in the background *after* this file
+# finishes sourcing, and unconditionally regenerates status-right/
+# window-status-format from tmux_conf_theme_* defaults, since those
+# variables are never overridden here (only the live options are, above)
+# -- silently clobbering the Catppuccin styling just set. Re-source this
+# file once more after a short delay so Catppuccin's styling wins the
+# race instead of needing a manual `:source-file ~/.tmux.conf.local`.
+#
+# Guarded by @tmux_conf_local_reload_scheduled: re-sourcing this file
+# re-runs this exact line too, so without the guard it schedules another
+# reload every 1.5s forever (the flashing/glitching bug). The guard
+# variable persists across re-sources (only unset by killing the tmux
+# server), so this only fires once per server instance.
+if -b '[ "#{@tmux_conf_local_reload_scheduled}" != "1" ]' {
+  set -g @tmux_conf_local_reload_scheduled 1
+  run -b "sh -c 'sleep 1.5; \"\$TMUX_PROGRAM\" \${TMUX_SOCKET:+-S \"\$TMUX_SOCKET\"} source \"\$TMUX_CONF_LOCAL\"'"
+}
+
+# # catpuccin oh-my-tmux ui settings
+# # The following characters are available
+# #  █              
+# # Go to this website for more characters: https://unicodes.jessetane.com/%EE%82%B4
+
 # Check out https://github.com/rothgar/awesome-tmux for other status bar configs
 
 # -- custom variables ----------------------------------------------------------
@@ -504,14 +601,12 @@ set -g @plugin 'tmux-plugins/tpm'
 #   curl -f -s -m 2 -4 ifconfig.me
 #   sleep 300                                         # sleep for 5 minutes, throttle network requests whatever the value of status-interval
 # }
-
 #
 # wan_ip_v6() {
 #   curl -f -s -m 2 -6 ifconfig.me
 #   sleep 300                                         # sleep for 5 minutes, throttle network requests whatever the value of status-interval
-#
+# }
 #
 # "$@"
 # # /!\ do not remove the previous line
 # #     do not write below this line
-

@@ -1,89 +1,142 @@
-vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>cl", "<cmd>lua ColorMyPencils()<CR>")
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+-- NOTE Prettier Configuration
+vim.g['prettier#autoformat'] = 1
+vim.g['prettier#autoformat_require_pragma'] = 0
 
--- move highlighted region up
-vim.keymap.set("v", "E", ":m '>+1<CR>gv=gv")
--- move highlighted region down
-vim.keymap.set("v", "U", ":m '<-2<CR>gv=gv")
+-- Toggle Color Scheme
+vim.keymap.set("n", "<leader>cl", "<cmd>lua ColorMyPencils()<CR>", { desc = "Toggle Color Scheme" })
 
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+-- Open Ex File Explorer
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open File Explorer" })
 
--- remap increment and decrement keys since tmux is using <C-a> as the <prefix> key 
-vim.keymap.set("n", "<A-a>", "<C-a>") 
-vim.keymap.set("n", "<A-x>", "<C-x>") 
+-- NOTE Moving Highlighted Text
+-- Move highlighted region up
+vim.keymap.set("v", "E", ":m '>+1<CR>gv=gv", { desc = "Move Sel Down" })
+-- Move highlighted region down
+vim.keymap.set("v", "U", ":m '<-2<CR>gv=gv", { desc = "Move Sel Up" })
 
-vim.keymap.set("n", "<leader>vwm", function()
-    require("vim-with-me").StartVimWithMe()
-end)
-vim.keymap.set("n", "<leader>svwm", function()
-    require("vim-with-me").StopVimWithMe()
-end)
+-- NOTE Enhanced Navigation
+-- Join lines without moving cursor
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Join Lines Without Moving Cursor" })
+-- Scroll down and center
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll Down and Center" })
+-- Scroll up and center
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll Up and Center" })
+-- Search next and center
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next Search Result and Center" })
+-- Search previous and center
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Prev Search Result and Center" })
 
--- clears the search highlighting
-vim.keymap.set('n', "<leader>/", "<cmd>noh<CR>")
+-- NOTE Increment/Decrement
+-- Increment
+vim.keymap.set("n", "<A-a>", "<C-a>", { desc = "++ Number" })
+-- Decrement
+vim.keymap.set("n", "<A-x>", "<C-x>", { desc = "-- Number" })
 
--- greatest remap ever
--- you have yanked text, but you don't want to lose it.
--- you want to paste it, replace some text, but not lose your original yank.
--- you send whatever was deleted into the void register
-vim.keymap.set("x", "<leader>p", [["_dP]])
+-- Clear Search Highlighting
+vim.keymap.set('n', "<leader>/", "<cmd>noh<CR>", { desc = "Clear Search Highlighting" })
 
--- next greatest remap ever : asbjornHaland
--- yank into the `"+` register, the system clipboard. 
--- now you can paste across multiple instances of vim using `<C-v>`
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
--- yank complete line onto the system clipboard
-vim.keymap.set("n", "<leader>Y", [["+Y]])
+-- Paste without overwriting register
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste Without Overwriting Register" })
 
-vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
+-- NOTE System Clipboard Operations
+-- Yank to system clipboard
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to System Clipboard" })
+-- Yank entire line to system clipboard
+vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank Entire Line to System Clipboard" })
+-- Delete without affecting registers
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete Without Affecting Registers" })
 
--- This is going to get me cancelled
-vim.keymap.set("i", "<C-c>", "<Esc>")
+-- Disable the `Q` key in normal mode
+vim.keymap.set("n", "Q", "<nop>", { desc = "Disable Q Key" })
 
-vim.keymap.set("n", "Q", "<nop>")
+-- Open Tmux Sessionizer in new Tmux window
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", { desc = "Open Tmux Sessionizer" })
 
--- new tmux session opening up tmux-sessionizer
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+-- Query cht.sh in new Tmux window
+vim.keymap.set("n", "<C-q>", "<cmd>silent !tmux neww cht.sh<CR>", { desc = "Query cht.sh" })
 
--- query cht.sh
-vim.keymap.set("n", "<C-q>", "<cmd>silent !tmux neww cht.sh<CR>")
+-- Format code using LSP
+vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format Code with LSP" })
 
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+-- NOTE Quickfix and Location List Navigation
+-- Navigate to next item in quickfix list and center
+vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz", { desc = "Next Quickfix Item" })
+-- Navigate to previous item in quickfix list and center
+vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz", { desc = "Prev Quickfix Item" })
+-- Navigate to next item in location list and center
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz", { desc = "Next Location List Item" })
+-- Navigate to previous item in location list and center
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz", { desc = "Prev Location List Item" })
 
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+-- Search and replace the word under cursor
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search & Replace Word Under Cursor" })
 
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- NOTE Make/Revert File Executable
+-- Make the current file executable
+vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { desc = "Make File Executable", silent = true })
+-- Revert making the current file executable
+vim.keymap.set("n", "<leader>x<Esc>", "<cmd>!chmod -x %<CR>", { desc = "Revert File Executable", silent = true })
 
--- make a file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
--- revert making a file executable
-vim.keymap.set("n", "<leader>x<Esc>", "<cmd>!chmod -x %<CR>", { silent = true })
+-- Open plugins.lua configuration file
+vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.config/nvim/lua/johnnyfiive/plugins.lua<CR>", { desc = "Open plugins.lua" })
 
-vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/johnnyfiive/packer.lua<CR>");
-vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
+-- Neotree reveal current file
+vim.keymap.set("n", "<leader>fr", ":Neotree reveal<CR>", { desc = "Reveal Current File in Neotree" })
 
 -- Dismiss Noice Message
-vim.keymap.set("n", "<leader>nd", "<cmd>NoiceDismiss<CR>", {desc = "Dismiss Noice Message"})
+vim.keymap.set("n", "<leader>nd", "<cmd>NoiceDismiss<CR>", { desc = "Dismiss Noice Message" })
 
--- Source file
+-- vim fugitive
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+
+-- NOTE Source, Write, Quit File
+-- Source the current file
 vim.keymap.set("n", "<leader><CR>", function()
     vim.cmd("so")
-end)
+end, { desc = "Source Current File" })
 
--- Write file
+-- Write (save) the current file
 vim.keymap.set("n", "<leader>w", function()
     vim.cmd("w")
-end)
+end, { desc = "Save Current File" })
 
--- Quit nvim
+-- Open a vertical split
+vim.keymap.set("n", "<leader>v", function()
+    vim.cmd("vsp")
+end, { desc = "Open a vertical split"}
+)
+
+-- Quit Neovim
 vim.keymap.set("n", "<leader>q", function()
     vim.cmd("q")
-end)
+end, { desc = "Quit Neovim" })
+
+-- Obsidian Live Grep
+vim.keymap.set('n', '<leader>os', ":ObsidianSearch<CR>", { desc = "Obsidian Search Vault" })
+
+-- Obsidian show back links
+vim.keymap.set("n", "<leader>ob", "<cmd>ObsidianBacklinks<cr>", { desc = "Obsidian Show Backlinks" })
+
+-- Obsidian search tags
+vim.keymap.set("n", "<leader>ot", "<cmd>ObsidianTags<cr>", { desc = "Obsidian Search Tags" })
+
+-- Obsidian create new note
+vim.keymap.set("n", "<leader>on", "<cmd>ObsidianNew<cr>", { desc = "Obsidian New Note" })
+
+-- Obsidian create today's note
+vim.keymap.set("n", "<leader>od", "<cmd>ObsidianToday<cr>", { desc = "Obsidian Today's Note" })
+
+-- Obsidian insert template
+vim.keymap.set("n", "<leader>oi", "<cmd>ObsidianTemplate<cr>", { desc = "Obsidian Insert Template" })
+
+-- Obsidian rename note
+vim.keymap.set("n", "<leader>or", "<cmd>ObsidianRename<cr>", { desc = "Obsidian Rename Note" })
+
+-- Obsidian link highlighted text
+vim.keymap.set("v", "<leader>ol", ":ObsidianLink<cr>", { desc = "Link Selection" })
+
+-- Obsidian extract highlighted text to new note
+vim.keymap.set("v", "<leader>oe", ":ObsidianExtractNote<cr>", { desc = "Extract Note" })
+
+-- Obsidian open note in Obsidian app
+vim.keymap.set("n", "<leader>oo", "<cmd>ObsidianOpen<cr>", { desc = "Open in Obsidian App" })

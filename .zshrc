@@ -1,12 +1,34 @@
+# Homebrew initialization (portable across Apple Silicon, Intel Mac, and
+# Linuxbrew -- `brew shellenv` sets PATH/MANPATH/INFOPATH correctly for
+# whichever prefix is actually in use, instead of hardcoding one).
+for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$brew_bin" ]; then
+    eval "$("$brew_bin" shellenv)"
+    break
+  fi
+done
+
+# TMUX_PROGRAM definition
+export TMUX_PROGRAM="$(command -v tmux)"
+
+export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins/"
+
+# Volta initialization
+export VOLTA_HOME="$HOME/.volta"
+[ -s "$VOLTA_HOME/load.zsh" ] && source "$VOLTA_HOME/load.zsh"
+
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+# p10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# adding ~/.local/bin folder 
-PATH="$PATH":"$HOME/.local/bin/"
+# Consolidate PATH modifications
+export PATH="$PATH:$HOME/.local/bin:$HOME/bin"
 
 # adding alias to my dotfiles folder
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # Enable vi mode
 bindkey -v
@@ -14,9 +36,6 @@ bindkey -v
 # tmux-sessionizer macro
 # refer to https://github.com/edr3x/tmux-sessionizer for instructions
 bindkey -s ^f "tmux-sessionizer\n"
-
- # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:/opt/homebrew/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -82,8 +101,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-source ~/.oh-my-zsh/plugins/powerlevel10k/
-
 #setting colorscheme before zsh-syntax-highlighting plugin
 source $ZSH/plugins/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
@@ -93,10 +110,9 @@ source $ZSH/plugins/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-h
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git 
+  git
   zsh-autosuggestions
   zsh-syntax-highlighting
-  z
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -135,4 +151,12 @@ source $ZSH/oh-my-zsh.sh
 
 # config to run zoxide
 eval "$(zoxide init zsh)"
-export FPATH="~/tmp/eza/completions/zsh:$FPATH"
+
+# Function to remove duplicate entries from PATH
+path_remove_dups() {
+  typeset -U path
+}
+path_remove_dups
+
+# Shopify Hydrogen alias to local projects
+alias h2='$(npm prefix -s)/node_modules/.bin/shopify hydrogen'
