@@ -101,8 +101,11 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-#setting colorscheme before zsh-syntax-highlighting plugin
-source $ZSH/plugins/zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+# Setting colorscheme before zsh-syntax-highlighting plugin. Vendored here
+# (not sourced from the plugin's own themes/ dir) because upstream
+# zsh-users/zsh-syntax-highlighting removed its themes/ directory after
+# Jan 2024 -- a fresh clone on a new machine no longer has this file.
+source "$HOME/.config/zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/

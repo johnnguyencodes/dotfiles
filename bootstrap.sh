@@ -226,11 +226,16 @@ fi
 
 # ------------------------------------------------------------------------
 # 6. oh-my-zsh + plugins
+#
+# KEEP_ZSHRC=yes stops the installer from backing up and overwriting an
+# existing .zshrc with its own template. Without it, this step silently
+# clobbers the real .zshrc that the dotfiles checkout (which runs before
+# bootstrap.sh, per the documented flow) already put in place.
 # ------------------------------------------------------------------------
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   log "Installing oh-my-zsh..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 else
   log "oh-my-zsh already installed"
 fi
