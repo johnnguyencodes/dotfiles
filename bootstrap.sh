@@ -123,6 +123,7 @@ install_if_missing zoxide
 install_if_missing lazygit
 install_if_missing volta
 install_if_missing gh
+install_if_missing fzf
 
 # Volta manages Node versions but doesn't install a Node runtime on its
 # own -- it only fetches one when something asks for it (a pinned

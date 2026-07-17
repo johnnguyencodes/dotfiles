@@ -119,6 +119,15 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+
+# fzf shell integration (key bindings + completion). `--zsh` asks fzf to
+# print its own integration script -- portable across macOS/Linux/install
+# location, unlike the old install-script-generated ~/.fzf.zsh with a
+# hardcoded path. Must load after oh-my-zsh: its own key-bindings.zsh
+# binds Ctrl-R to the plain history search and would clobber fzf's
+# history widget if fzf's integration loaded first.
+command -v fzf >/dev/null 2>&1 && eval "$(fzf --zsh)"
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
