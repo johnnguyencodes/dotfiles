@@ -274,6 +274,18 @@ if [ ! -e "$HOME/.tmux.conf" ]; then
 fi
 # .tmux.conf.local itself comes from the dotfiles checkout, not this clone.
 
+# catppuccin/tmux -- .tmux.conf.local's `run` line for the status line
+# theme expects this at ~/.config/tmux/plugins/catppuccin/tmux (note:
+# not TPM's convention of ~/.tmux/plugins/, since this predates using TPM
+# for it and was never migrated).
+if [ ! -d "$HOME/.config/tmux/plugins/catppuccin/tmux/.git" ]; then
+  log "Cloning catppuccin/tmux..."
+  mkdir -p "$HOME/.config/tmux/plugins/catppuccin"
+  git clone --depth=1 https://github.com/catppuccin/tmux.git "$HOME/.config/tmux/plugins/catppuccin/tmux"
+else
+  log "catppuccin/tmux already cloned"
+fi
+
 # ------------------------------------------------------------------------
 # 8. TPM (tmux plugin manager)
 # ------------------------------------------------------------------------
