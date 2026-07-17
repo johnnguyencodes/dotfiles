@@ -8,6 +8,10 @@ return {
     require('nvim-treesitter.configs').setup({
       -- Specify languages to be installed. Replace "all" with specific languages if needed
       ensure_installed = "all",
+      -- ipkg's release tarball fails to extract (upstream packaging issue,
+      -- not a local problem) -- skip it so it doesn't retry-and-fail on
+      -- every startup.
+      ignore_install = { "ipkg" },
 
       highlight = { enable = true }, -- Enable syntax highlighting
       indent = { enable = true }, -- Enable Treesitter-based indentation
