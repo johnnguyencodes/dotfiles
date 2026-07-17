@@ -14,11 +14,13 @@ end
 config.hide_tab_bar_if_only_one_tab = true
 config.max_fps = 120
 
--- Path to your wallpapers folder, relative to $HOME so this works on any
--- machine. Not committed to the dotfiles repo (binary assets) -- add your
--- own images here if you want the daily-wallpaper feature; it's skipped
--- gracefully if this folder doesn't exist.
-local wallpapers_dir = wezterm.home_dir .. '/Catppuccin Wallpapers/landscapes/'
+-- Path to the wallpapers folder, relative to $HOME so this works on any
+-- machine. Tracked in the dotfiles repo (a curated 7-file subset of
+-- github.com/Gingeh/wallpapers' landscapes category, not the full
+-- upstream collection). Still resolved via a function/io.open check
+-- rather than a hardcoded assumption, so the background image feature
+-- degrades gracefully if this folder is ever missing on some machine.
+local wallpapers_dir = wezterm.home_dir .. '/.config/wezterm/wallpapers/'
 
 -- Define an array of wallpapers for each day
 local daily_wallpapers = {

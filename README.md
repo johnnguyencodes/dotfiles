@@ -14,6 +14,13 @@ set all of it up on a fresh machine (macOS or Ubuntu/Debian Linux).
   repo is the live source going forward.
 - **`.zshrc`**, **`.p10k.zsh`** -- zsh + oh-my-zsh + powerlevel10k.
 - **`.wezterm.lua`** -- WezTerm terminal config.
+- **`.config/wezterm/wallpapers/`** -- the 7 daily-rotation wallpaper images
+  `.wezterm.lua` references, a curated subset of
+  [Gingeh/wallpapers](https://github.com/Gingeh/wallpapers)' landscapes
+  category (not the full upstream collection). `.wezterm.lua` still checks
+  for this folder before using it rather than assuming it's there, so the
+  background-image feature degrades gracefully on any machine where it's
+  missing.
 - **`.tmux.conf`** (symlink) + **`.tmux.conf.local`** -- tmux, built on the
   [gpakosz/.tmux](https://github.com/gpakosz/.tmux) framework with a
   Catppuccin status line. `.tmux.conf` is tracked here, but only as the
@@ -27,12 +34,6 @@ set all of it up on a fresh machine (macOS or Ubuntu/Debian Linux).
   toolset, Node via Volta, WezTerm, oh-my-zsh + plugins, the tmux framework +
   TPM) and checks out this repo. Safe to re-run any time -- every step checks
   whether it's already done before acting.
-
-**Not included:** the Catppuccin wallpaper images `.wezterm.lua` references
-(`~/Catppuccin Wallpapers/landscapes/`) -- binary assets, kept out of the
-repo. `.wezterm.lua` skips the background-image feature gracefully if that
-folder doesn't exist, so this is optional; add your own images there if you
-want it.
 
 ## Bootstrap a new machine
 
