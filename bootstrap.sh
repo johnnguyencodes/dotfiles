@@ -298,6 +298,20 @@ else
   log "TPM already cloned"
 fi
 
+# tmux-sessionx is pinned to a specific commit (.tmux.conf.local:
+# `omerxx/tmux-sessionx#3a1911e`) that TPM's auto-install doesn't
+# reliably fetch/checkout -- it silently leaves the plugin directory
+# missing entirely rather than wrong-branch, so <prefix>q just does
+# nothing. Cloned explicitly (not --depth=1, so the pinned commit is
+# actually reachable) and checked out to match.
+if [ ! -d "$HOME/.tmux/plugins/tmux-sessionx/.git" ]; then
+  log "Cloning tmux-sessionx (pinned commit)..."
+  git clone https://github.com/omerxx/tmux-sessionx "$HOME/.tmux/plugins/tmux-sessionx"
+  git -C "$HOME/.tmux/plugins/tmux-sessionx" checkout 3a1911e
+else
+  log "tmux-sessionx already cloned"
+fi
+
 # ------------------------------------------------------------------------
 # 9. Dotfiles bare repo (no-op if already checked out, e.g. when this
 #    script is being run as part of the checkout it came from)
