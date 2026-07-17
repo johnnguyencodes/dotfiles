@@ -393,6 +393,16 @@ set -g mouse on
 # set -g prefix C-a
 # bind C-a send-prefix
 
+# Extra prefix (C-x) on Linux machines only, for nested-tmux setups: when
+# SSH'd into this machine from inside a tmux session already running
+# locally, the outer tmux always intercepts C-b/C-a first since it's
+# closer to the actual terminal -- this machine's tmux never sees them.
+# C-x isn't bound as a prefix anywhere in the outer (macOS) tmux config,
+# so it passes straight through the SSH session and lands here instead.
+if -b '[ "$(uname -s)" = "Linux" ]' {
+  bind-key -n C-x switch-client -T prefix
+}
+
 # if you don't want Oh my tmux! to alter a binding, use #!important
 # bind c new-window -c '#{pane_current_path}' #!important
 
