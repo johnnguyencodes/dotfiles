@@ -2,6 +2,20 @@
 vim.g['prettier#autoformat'] = 1
 vim.g['prettier#autoformat_require_pragma'] = 0
 
+-- vim-prettier's own default for exec_cmd_path is the *number* 0, not a
+-- path. Its resolver only hits that default in the code path checking a
+-- globally-installed prettier (no locally-resolvable one, e.g. a
+-- standalone file outside any node_modules tree) -- and that code path
+-- passes it straight to isdirectory(), which requires a string, crashing
+-- with "E1174: String required for argument 1" on every save. Pointing
+-- this at a real path makes vim-prettier's resolver return early and
+-- never reach the buggy fallback. Only set when found so this stays a
+-- no-op (same as upstream default) on a machine without prettier yet.
+local prettier_path = vim.fn.exepath('prettier')
+if prettier_path ~= '' then
+  vim.g['prettier#exec_cmd_path'] = prettier_path
+end
+
 -- Toggle Color Scheme
 vim.keymap.set("n", "<leader>cl", "<cmd>lua ColorMyPencils()<CR>", { desc = "Toggle Color Scheme" })
 

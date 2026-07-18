@@ -139,6 +139,19 @@ else
   volta install node@lts
 fi
 
+# prettier, installed globally: vim-prettier's format-on-save resolver
+# falls back to this when a file has no local node_modules/prettier above
+# it (e.g. a standalone file outside any project). Without a real
+# executable here, that fallback path hits an upstream vim-prettier bug
+# (isdirectory() called with a bare 0 instead of a string) and crashes on
+# every save of such a file.
+if have prettier; then
+  log "prettier already installed ($(prettier --version)), skipping"
+else
+  log "Installing prettier via volta..."
+  volta install prettier
+fi
+
 # ------------------------------------------------------------------------
 # 4. WezTerm (no Linux Homebrew cask -- casks are macOS-only. The `wezterm`
 # command isn't necessarily on PATH even when installed as a cask, so check
