@@ -101,7 +101,7 @@ vim.keymap.set("n", "<leader>fr", ":Neotree reveal<CR>", { desc = "Reveal Curren
 vim.keymap.set("n", "<leader>nd", "<cmd>NoiceDismiss<CR>", { desc = "Dismiss Noice Message" })
 
 -- vim fugitive
-vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git, { desc = "Git Status (Fugitive)" })
 
 -- NOTE Source, Write, Quit File
 -- Source the current file

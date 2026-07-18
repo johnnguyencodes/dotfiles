@@ -77,28 +77,30 @@ return {
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("johnnyfiive-lsp-attach", { clear = true }),
       callback = function(event)
-        local opts = { buffer = event.buf, remap = false }
+        local function opts(desc)
+          return { buffer = event.buf, remap = false, desc = desc }
+        end
 
-        vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)
-        vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-        vim.keymap.set("n", "gi", function() vim.lsp.buf.implementation() end, opts)
-        vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-        vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-        vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-        vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-        vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-        vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
-        vim.keymap.set("n", "<leader>rr", function() vim.lsp.buf.references() end, opts)
-        vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
-        vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+        vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts("Go to Declaration"))
+        vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts("Go to Definition"))
+        vim.keymap.set("n", "gi", function() vim.lsp.buf.implementation() end, opts("Go to Implementation"))
+        vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts("Hover Documentation"))
+        vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts("Workspace Symbols"))
+        vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts("Show Diagnostic"))
+        vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts("Next Diagnostic"))
+        vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts("Prev Diagnostic"))
+        vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts("Code Action"))
+        vim.keymap.set("n", "<leader>rr", function() vim.lsp.buf.references() end, opts("Find References"))
+        vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts("Rename Symbol"))
+        vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts("Signature Help"))
 
         -- Previously-invisible lsp-zero defaults (set_lsp_keymaps=true)
         -- that are live today and not covered above. `<C-k>`/`gl` omitted:
         -- `<C-k>` is already globally bound to quickfix-next in remap.lua
         -- (confirmed dead today), `gl` is a pure duplicate of <leader>vd.
-        vim.keymap.set("n", "go", function() vim.lsp.buf.type_definition() end, opts)
-        vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
-        vim.keymap.set({ "n", "x" }, "<F4>", function() vim.lsp.buf.code_action() end, opts)
+        vim.keymap.set("n", "go", function() vim.lsp.buf.type_definition() end, opts("Go to Type Definition"))
+        vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts("Find References"))
+        vim.keymap.set({ "n", "x" }, "<F4>", function() vim.lsp.buf.code_action() end, opts("Code Action"))
       end,
     })
 
