@@ -16,6 +16,16 @@ if prettier_path ~= '' then
   vim.g['prettier#exec_cmd_path'] = prettier_path
 end
 
+-- vim-prettier's plugin/prettier.vim auto-claims bare <leader>p (normal
+-- mode) for :Prettier via a legacy `nmap` whenever nothing else is
+-- already mapped to <Plug>(Prettier) or to <leader>p itself -- it runs
+-- before this file loads, so <leader>pf/<leader>ps/<leader>pv (which
+-- don't count as mapping <leader>p on its own) don't stop it claiming
+-- the bare key. That auto-mapping has no desc, which is why which-key
+-- showed it as a blank "_" entry sitting inside the pf/ps/pv group.
+-- Overriding it here with our own mapping gives it a real description.
+vim.keymap.set("n", "<leader>p", "<cmd>Prettier<CR>", { desc = "Format with Prettier" })
+
 -- Toggle Color Scheme
 vim.keymap.set("n", "<leader>cl", "<cmd>lua ColorMyPencils()<CR>", { desc = "Toggle Color Scheme" })
 
