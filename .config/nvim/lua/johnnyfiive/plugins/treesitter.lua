@@ -2,8 +2,18 @@
 -- See `:help nvim-treesitter`
 return {
   'nvim-treesitter/nvim-treesitter',
+  -- Upstream renamed its default branch to "main", a full incompatible
+  -- rewrite (no nvim-treesitter.configs, no ensure_installed -- none of
+  -- what this config uses). The old API lives on in "master". Without
+  -- pinning this, a fresh install on a machine that clones after the
+  -- rename picks up "main" by default despite lazy-lock.json recording
+  -- the right master-branch commit, and Neovim fails to start with
+  -- "module 'nvim-treesitter.configs' not found".
+  branch = 'master',
   build = ':TSUpdate', -- Automatically update parsers when the plugin is updated
-  dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' }, -- Include textobjects module
+  dependencies = {
+    { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'master' }, -- Include textobjects module
+  },
   config = function()
     require('nvim-treesitter.configs').setup({
       -- Specify languages to be installed. Replace "all" with specific languages if needed
