@@ -18,10 +18,14 @@ return {
     require('nvim-treesitter.configs').setup({
       -- Specify languages to be installed. Replace "all" with specific languages if needed
       ensure_installed = "all",
-      -- ipkg's release tarball fails to extract (upstream packaging issue,
-      -- not a local problem) -- skip it so it doesn't retry-and-fail on
-      -- every startup.
-      ignore_install = { "ipkg" },
+      -- Same upstream packaging issue as ipkg (broken release tarball,
+      -- not a local problem) -- these only surface on a genuinely fresh
+      -- install (ensure_installed = "all" tries every parser, and an
+      -- already-populated parser dir on an existing machine never
+      -- re-attempts ones it installed successfully long ago, so this
+      -- list only grows when a *new* machine's first install hits
+      -- whatever happens to be broken upstream at that moment).
+      ignore_install = { "ipkg", "prolog", "problog" },
 
       highlight = { enable = true }, -- Enable syntax highlighting
       indent = { enable = true }, -- Enable Treesitter-based indentation
