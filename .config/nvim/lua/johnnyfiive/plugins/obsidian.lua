@@ -31,14 +31,14 @@ return {
           action = function()
             return require("obsidian").util.gf_passthrough()
           end,
-          opts = { noremap = false, expr = true, buffer = true },
+          opts = { noremap = false, expr = true, buffer = true, desc = "Obsidian Follow Link" },
         },
         -- Toggle checkboxes "Obsidian done"
         ["<leader>ch"] = {
           action = function()
             return require("obsidian").util.toggle_checkbox()
           end,
-          opts = { buffer = true },
+          opts = { buffer = true, desc = "Obsidian Toggle Checkbox" },
         },
         -- -- Create a new newsletter issue
         -- ["<leader>onn"] = {
