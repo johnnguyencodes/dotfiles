@@ -119,7 +119,15 @@ return {
   -- LuaSnip
   {
     'L3MON4D3/LuaSnip',
-    tag = 'v2.*',
+    -- `tag` requires an exact tag name -- lazy.nvim resolves it via a
+    -- literal `git show-ref -d tags/v2.*`, which doesn't glob-expand and
+    -- always fails to match anything (confirmed on both macOS and the
+    -- Pi, same lazy.nvim code, different git versions -- not a git-
+    -- version issue). `version` is the field meant for a pattern like
+    -- this: it strips the ".*"/".x" suffix and resolves it as a real
+    -- semver range via lazy's own version-comparison logic, correctly
+    -- picking the latest matching tag (verified: resolves to v2.5.0).
+    version = 'v2.*',
     build = 'make install_jsregexp',
   },
 
