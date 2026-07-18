@@ -24,7 +24,7 @@ end
 -- the bare key. That auto-mapping has no desc, which is why which-key
 -- showed it as a blank "_" entry sitting inside the pf/ps/pv group.
 -- Overriding it here with our own mapping gives it a real description.
-vim.keymap.set("n", "<leader>p", "<cmd>Prettier<CR>", { desc = "Format with Prettier" })
+vim.keymap.set("n", "<leader>p", "<cmd>Prettier<CR>", { desc = "Search Within Project or Format with Prettier" })
 
 -- Toggle Color Scheme
 vim.keymap.set("n", "<leader>cl", "<cmd>lua ColorMyPencils()<CR>", { desc = "Toggle Color Scheme" })
