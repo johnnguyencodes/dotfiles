@@ -152,19 +152,6 @@ else
   volta install prettier
 fi
 
-# typescript, installed globally: typescript-tools.nvim needs a tsserver
-# binary, which it looks for in the current project's node_modules or in
-# a global npm/volta install. Without a global fallback here, opening any
-# .ts/.tsx file that isn't inside a project with its own local typescript
-# dependency fails LSP attach with "Cannot find tsserver executable in
-# local project nor global npm installation."
-if have tsc; then
-  log "typescript already installed ($(tsc --version)), skipping"
-else
-  log "Installing typescript via volta..."
-  volta install typescript
-fi
-
 # ------------------------------------------------------------------------
 # 4. WezTerm (no Linux Homebrew cask -- casks are macOS-only. The `wezterm`
 # command isn't necessarily on PATH even when installed as a cask, so check
