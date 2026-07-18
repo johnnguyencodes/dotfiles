@@ -479,6 +479,7 @@ set-window-option -g status-position top
 # git clone https://github.com/omerxx/tmux-floax ~/.tmux/plugins/tmux-floax
 # also, make sure the local git repo of sessionx is checked out to branch `3a1911e` (make sure to run git fetch origin to fetch remote branches) and then restart tmux for it to work properly.
 # then, to properly load the custom styling for the status bar, exit out of neovim from here and then hit `Ctrl-a :` to open up the tmux command line, then run the command `source-file ~/.tmux.conf.local`
+# to resume claude's session, run `claude --resume 9f8b602a-eab1-4c6f-91f0-4cf5c316d0b4`    
 
 ## Load Catppuccin Tmux Theme
 

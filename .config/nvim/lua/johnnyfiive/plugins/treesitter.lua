@@ -102,5 +102,25 @@ return {
       end
       metadata['injection.language'] = lang_from_info_string(vim.treesitter.get_node_text(node, bufnr):lower())
     end, { force = true, all = false })
+
+    -- Same upstream bug, different predicate: "kind-eq?" (and its
+    -- auto-derived negation "not-kind-eq?", core's own synthesized
+    -- opposite of any registered predicate) hits the same list-instead-
+    -- of-single-node issue. ecma/indents.scm (which tsx/jsx inherit)
+    -- uses #not-kind-eq? to decide whether a closing JSX tag should
+    -- dedent -- when it throws, indentexpr fails silently and Neovim
+    -- falls back to 0, which is why new lines typed inside JSX (e.g.
+    -- after a multi-line <a ...> open tag) stopped auto-indenting.
+    query.add_predicate('kind-eq?', function(match, _pattern, _bufnr, pred)
+      local node = match[pred[2]]
+      if type(node) == 'table' and not node.range then
+        node = node[1] -- unwrap list-of-nodes back to a single node
+      end
+      if not node then
+        return true
+      end
+      local types = { unpack(pred, 3) }
+      return vim.tbl_contains(types, node:type())
+    end, { force = true, all = false })
   end,
 }

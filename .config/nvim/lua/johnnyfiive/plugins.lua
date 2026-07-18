@@ -69,10 +69,17 @@ return {
     end,
   },
 
-  -- Nvim-ts-autotag
+  -- Nvim-ts-autotag: auto-closes JSX/HTML tags as you type (e.g. typing
+  -- `>` after `<div` immediately inserts `</div>`). Was listed as a
+  -- dependency but never had `.setup()` called, so it was never actually
+  -- active -- confirmed via testing that it changes the JSX typing
+  -- pattern enough to fix indent-while-typing (see treesitter.lua note).
   {
     'windwp/nvim-ts-autotag',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
   },
 
   -- Vim-visual-multi
