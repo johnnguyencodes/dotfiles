@@ -137,7 +137,12 @@ return {
   -- Obsidian.nvim
   {
     'epwalsh/obsidian.nvim',
-    tag = '*',
+    -- Same bug as LuaSnip's spec: `tag` requires an exact tag name and
+    -- resolves via a literal `git show-ref -d tags/*`, which doesn't
+    -- glob-expand and always fails to match anything. `version` is the
+    -- field meant for a wildcard/range pattern (verified: resolves to
+    -- v3.9.0, the actual latest tag).
+    version = '*',
     ft = "markdown",
     dependencies = {
       'nvim-lua/plenary.nvim',
