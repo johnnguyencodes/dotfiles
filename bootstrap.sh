@@ -158,18 +158,11 @@ fi
 # .ts/.tsx file that isn't inside a project with its own local typescript
 # dependency fails LSP attach with "Cannot find tsserver executable in
 # local project nor global npm installation."
-#
-# Pinned, not latest: typescript dropped the "tsserver" bin entry from
-# its package.json at some point after 5.7.2 (confirmed via the npm
-# registry -- 7.0.2's bin field has only "tsc", 5.7.2 has "tsc" and
-# "tsserver"). "latest" silently installs a version typescript-tools.nvim
-# can't find tsserver in at all.
-TYPESCRIPT_VERSION="5.7.2"
-if have tsc && [ "$(tsc --version)" = "Version $TYPESCRIPT_VERSION" ]; then
-  log "typescript $TYPESCRIPT_VERSION already installed, skipping"
+if have tsc; then
+  log "typescript already installed ($(tsc --version)), skipping"
 else
-  log "Installing typescript@$TYPESCRIPT_VERSION via volta..."
-  volta install "typescript@$TYPESCRIPT_VERSION"
+  log "Installing typescript via volta..."
+  volta install typescript
 fi
 
 # ------------------------------------------------------------------------
